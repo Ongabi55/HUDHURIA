@@ -1,0 +1,37 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #060B1A;
+  --surface: #0D1635;
+  --accent: #C4224D;
+  --muted: #8899BB;
+}
+
+html, body, #__next {
+  height: 100%;
+}
+
+body {
+  background-color: var(--bg);
+  color: #FFFFFF;
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+}
+
+::selection {
+  background: #C4224D;
+  color: white;
+}
+
+/* Glass card utility */
+.glass-card {
+  background-color: var(--surface);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 1rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+/* Note: @tailwind rules require Tailwind configured in the build toolchain (postcss). */

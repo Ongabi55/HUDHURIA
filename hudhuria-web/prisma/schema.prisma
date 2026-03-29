@@ -1,0 +1,163 @@
+// Hudhuria — Campus Event Booking & Management Platform
+// Prisma Schema adapted for PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────
+// USER
+// ─────────────────────────────────────────────
+// role: "STUDENT" | "ORGANIZER" | "ADMIN"
+
+model User {
+  id               String   @id @default(cuid())
+  name             String
+  email            String   @unique
+  passwordHash     String
+  role             String   @default("STUDENT")
+  institution      String
+  profileImage     String?
+  attendanceStreak Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  organizedEvents Event[]           @relation("OrganizerEvents")
+  bookings        Booking[]
+  notifications   Notification[]
+  refreshTokens   RefreshToken[]
+  following       OrganizerFollow[] @relation("StudentFollows")
+  followers       OrganizerFollow[] @relation("OrganizerFollowers")
+
+  @@map("users")
+}
+
+// ─────────────────────────────────────────────
+// REFRESH TOKEN
+// ─────────────────────────────────────────────
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  revoked   Boolean  @default(false)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+// ─────────────────────────────────────────────
+// EVENT
+// ─────────────────────────────────────────────
+// status: "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED"
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  category    String
+  startDate   DateTime
+  endDate     DateTime
+  location    String
+  capacity    Int
+  imageUrl    String?
+  organizerId String
+  status      String   @default("DRAFT")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  organizer User       @relation("OrganizerEvents", fields: [organizerId], references: [id], onDelete: Cascade)
+  bookings  Booking[]
+  tags      EventTag[] @relation("EventTags")
+
+  @@index([organizerId])
+  @@index([status])
+  @@index([startDate])
+  @@map("events")
+}
+
+// ─────────────────────────────────────────────
+// EVENT TAG
+// ─────────────────────────────────────────────
+
+model EventTag {
+  id     String  @id @default(cuid())
+  name   String  @unique
+  events Event[] @relation("EventTags")
+
+  @@map("event_tags")
+}
+
+// ─────────────────────────────────────────────
+// BOOKING
+// ─────────────────────────────────────────────
+// status: "CONFIRMED" | "CANCELLED" | "WAITLISTED"
+
+model Booking {
+  id          String    @id @default(cuid())
+  userId      String
+  eventId     String
+  status      String    @default("CONFIRMED")
+  qrToken     String    @unique @default(cuid())
+  checkedIn   Boolean   @default(false)
+  checkedInAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, eventId])
+  @@index([userId])
+  @@index([eventId])
+  @@index([qrToken])
+  @@map("bookings")
+}
+
+// ─────────────────────────────────────────────
+// NOTIFICATION
+// ─────────────────────────────────────────────
+// type: "BOOKING_CONFIRMED" | "BOOKING_CANCELLED" | "EVENT_PUBLISHED" | etc.
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  title     String
+  body      String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read])
+  @@map("notifications")
+}
+
+// ─────────────────────────────────────────────
+// ORGANIZER FOLLOW
+// ─────────────────────────────────────────────
+
+model OrganizerFollow {
+  id          String   @id @default(cuid())
+  studentId   String
+  organizerId String
+  createdAt   DateTime @default(now())
+
+  student   User @relation("StudentFollows",    fields: [studentId],   references: [id], onDelete: Cascade)
+  organizer User @relation("OrganizerFollowers", fields: [organizerId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, organizerId])
+  @@map("organizer_follows")
+}
+
+

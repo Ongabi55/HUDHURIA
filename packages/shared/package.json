@@ -1,0 +1,15 @@
+{
+  "name": "@hudhuria/shared",
+  "version": "1.0.0",
+  "description": "Shared types, validators, and constants for Hudhuria",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}
