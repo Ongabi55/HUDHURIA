@@ -40,7 +40,7 @@ function mapToPublicUser(user: PrismaUser): User {
     id: user.id,
     name: user.name,
     email: user.email,
-    role: user.role,
+    role: user.role as User["role"],
     institution: user.institution,
     profileImage: user.profileImage,
     attendanceStreak: user.attendanceStreak,
@@ -99,7 +99,7 @@ export async function register(input: RegisterInput): Promise<LoginResponse> {
     },
   });
 
-  const accessToken = signAccessToken(user.id, user.role);
+  const accessToken = signAccessToken(user.id, user.role as User["role"]);
   const refreshToken = signRefreshToken(user.id);
   await storeRefreshToken(user.id, refreshToken);
 
@@ -127,7 +127,7 @@ export async function login(input: LoginInput): Promise<LoginResponse> {
     throw new AppError(401, "Invalid credentials");
   }
 
-  const accessToken = signAccessToken(user.id, user.role);
+  const accessToken = signAccessToken(user.id, user.role as User["role"]);
   const refreshToken = signRefreshToken(user.id);
   await storeRefreshToken(user.id, refreshToken);
 
@@ -174,7 +174,7 @@ export async function refresh(
     throw new AppError(401, "User not found");
   }
 
-  const newAccessToken = signAccessToken(user.id, user.role);
+  const newAccessToken = signAccessToken(user.id, user.role as User["role"]);
   const newRefreshToken = signRefreshToken(user.id);
 
   // Rotate atomically: delete old, create new

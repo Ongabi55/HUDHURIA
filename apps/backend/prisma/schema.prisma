@@ -1,46 +1,30 @@
 // Hudhuria — Campus Event Booking & Management Platform
-// Prisma Schema v1.0 — PostgreSQL compatible
+// Prisma Schema v1.0 — SQLite (dev) / PostgreSQL (prod)
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
-// Enums
-enum Role {
-  STUDENT
-  ORGANIZER
-  ADMIN
-}
-
-enum EventStatus {
-  DRAFT
-  PUBLISHED
-  CANCELLED
-  COMPLETED
-}
-
-enum BookingStatus {
-  CONFIRMED
-  CANCELLED
-  WAITLISTED
-}
+// SQLite does not support enums — stored as String and validated at app layer.
+// Role values:         "STUDENT" | "ORGANIZER" | "ADMIN"
+// EventStatus values:  "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED"
+// BookingStatus values:"CONFIRMED" | "CANCELLED" | "WAITLISTED"
 
 // ─────────────────────────────────────────────
 // USER
 // ─────────────────────────────────────────────
-// role: "STUDENT" | "ORGANIZER" | "ADMIN"
 
 model User {
   id               String   @id @default(cuid())
   name             String
   email            String   @unique
   passwordHash     String
-  role             Role     @default(STUDENT)
+  role             String   @default("STUDENT")
   institution      String
   profileImage     String?
   attendanceStreak Int      @default(0)
@@ -78,10 +62,9 @@ model RefreshToken {
 // ─────────────────────────────────────────────
 // EVENT
 // ─────────────────────────────────────────────
-// status: "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED"
 
 model Event {
-  id          String      @id @default(cuid())
+  id          String   @id @default(cuid())
   title       String
   description String
   category    String
@@ -91,9 +74,9 @@ model Event {
   capacity    Int
   imageUrl    String?
   organizerId String
-  status      EventStatus @default(DRAFT)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  status      String   @default("DRAFT")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   organizer User       @relation("OrganizerEvents", fields: [organizerId], references: [id], onDelete: Cascade)
   bookings  Booking[]
@@ -120,18 +103,17 @@ model EventTag {
 // ─────────────────────────────────────────────
 // BOOKING
 // ─────────────────────────────────────────────
-// status: "CONFIRMED" | "CANCELLED" | "WAITLISTED"
 
 model Booking {
-  id          String        @id @default(cuid())
+  id          String    @id @default(cuid())
   userId      String
   eventId     String
-  status      BookingStatus @default(CONFIRMED)
-  qrToken     String        @unique @default(cuid())
-  checkedIn   Boolean       @default(false)
+  status      String    @default("CONFIRMED")
+  qrToken     String    @unique @default(cuid())
+  checkedIn   Boolean   @default(false)
   checkedInAt DateTime?
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
@@ -146,7 +128,6 @@ model Booking {
 // ─────────────────────────────────────────────
 // NOTIFICATION
 // ─────────────────────────────────────────────
-// type: "BOOKING_CONFIRMED" | "BOOKING_CANCELLED" | "EVENT_PUBLISHED" | etc.
 
 model Notification {
   id        String   @id @default(cuid())

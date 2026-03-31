@@ -10,7 +10,7 @@
  *   - 8 Sample bookings
  */
 
-import { PrismaClient, Role, EventStatus, BookingStatus } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import { randomUUID } from "crypto";
 
@@ -47,7 +47,7 @@ async function main() {
       name: "Amina Ochieng",
       email: "admin@hudhuria.co.ke",
       passwordHash: hash,
-      role: Role.ADMIN,
+      role: "ADMIN",
       institution: "Hudhuria HQ",
     },
   });
@@ -57,7 +57,7 @@ async function main() {
       name: "Brian Kamau",
       email: "brian@uon.ac.ke",
       passwordHash: hash,
-      role: Role.ORGANIZER,
+      role: "ORGANIZER",
       institution: "University of Nairobi",
     },
   });
@@ -67,7 +67,7 @@ async function main() {
       name: "Cynthia Wanjiku",
       email: "cynthia@strathmore.edu",
       passwordHash: hash,
-      role: Role.ORGANIZER,
+      role: "ORGANIZER",
       institution: "Strathmore University",
     },
   });
@@ -78,7 +78,7 @@ async function main() {
         name: "David Otieno",
         email: "david@student.uon.ac.ke",
         passwordHash: hash,
-        role: Role.STUDENT,
+        role: "STUDENT",
         institution: "University of Nairobi",
         attendanceStreak: 3,
       },
@@ -88,7 +88,7 @@ async function main() {
         name: "Esther Mwangi",
         email: "esther@student.strathmore.edu",
         passwordHash: hash,
-        role: Role.STUDENT,
+        role: "STUDENT",
         institution: "Strathmore University",
         attendanceStreak: 7,
       },
@@ -98,7 +98,7 @@ async function main() {
         name: "Felix Ndung'u",
         email: "felix@student.kenyatta.ac.ke",
         passwordHash: hash,
-        role: Role.STUDENT,
+        role: "STUDENT",
         institution: "Kenyatta University",
         attendanceStreak: 1,
       },
@@ -108,7 +108,7 @@ async function main() {
         name: "Grace Akinyi",
         email: "grace@student.uon.ac.ke",
         passwordHash: hash,
-        role: Role.STUDENT,
+        role: "STUDENT",
         institution: "University of Nairobi",
         attendanceStreak: 0,
       },
@@ -118,7 +118,7 @@ async function main() {
         name: "Hassan Abdi",
         email: "hassan@student.strathmore.edu",
         passwordHash: hash,
-        role: Role.STUDENT,
+        role: "STUDENT",
         institution: "Strathmore University",
         attendanceStreak: 12,
       },
@@ -161,7 +161,7 @@ async function main() {
       capacity: 300,
       imageUrl: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800",
       organizerId: organizer1.id,
-      status: EventStatus.PUBLISHED,
+      status: "PUBLISHED",
       tags: ["Tech"],
     },
     {
@@ -175,7 +175,7 @@ async function main() {
       capacity: 500,
       imageUrl: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?w=800",
       organizerId: organizer2.id,
-      status: EventStatus.PUBLISHED,
+      status: "PUBLISHED",
       tags: ["Career"],
     },
     {
@@ -189,7 +189,7 @@ async function main() {
       capacity: 200,
       imageUrl: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800",
       organizerId: organizer1.id,
-      status: EventStatus.PUBLISHED,
+      status: "PUBLISHED",
       tags: ["Culture", "Social"],
     },
     {
@@ -203,7 +203,7 @@ async function main() {
       capacity: 400,
       imageUrl: "https://images.unsplash.com/photo-1571008887538-b36bb32f4571?w=800",
       organizerId: organizer2.id,
-      status: EventStatus.PUBLISHED,
+      status: "PUBLISHED",
       tags: ["Sports", "Health"],
     },
     {
@@ -217,7 +217,7 @@ async function main() {
       capacity: 120,
       imageUrl: "https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=800",
       organizerId: organizer1.id,
-      status: EventStatus.PUBLISHED,
+      status: "PUBLISHED",
       tags: ["Tech", "Career"],
     },
     {
@@ -231,7 +231,7 @@ async function main() {
       capacity: 150,
       imageUrl: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800",
       organizerId: organizer2.id,
-      status: EventStatus.PUBLISHED,
+      status: "PUBLISHED",
       tags: ["Health", "Social"],
     },
     {
@@ -245,7 +245,7 @@ async function main() {
       capacity: 80,
       imageUrl: "https://images.unsplash.com/photo-1556761175-4b46a572b786?w=800",
       organizerId: organizer1.id,
-      status: EventStatus.PUBLISHED,
+      status: "PUBLISHED",
       tags: ["Career", "Tech"],
     },
     {
@@ -259,7 +259,7 @@ async function main() {
       capacity: 250,
       imageUrl: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800",
       organizerId: organizer2.id,
-      status: EventStatus.DRAFT,
+      status: "DRAFT",
       tags: ["Culture"],
     },
     {
@@ -273,7 +273,7 @@ async function main() {
       capacity: 160,
       imageUrl: "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=800",
       organizerId: organizer1.id,
-      status: EventStatus.PUBLISHED,
+      status: "PUBLISHED",
       tags: ["Sports"],
     },
     {
@@ -287,7 +287,7 @@ async function main() {
       capacity: 350,
       imageUrl: "https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?w=800",
       organizerId: organizer2.id,
-      status: EventStatus.DRAFT,
+      status: "DRAFT",
       tags: ["Tech", "Culture"],
     },
   ];
@@ -313,18 +313,18 @@ async function main() {
   console.log("  Creating bookings...");
 
   const publishedEvents = Object.values(events).filter(
-    (e) => e.status === EventStatus.PUBLISHED
+    (e) => e.status === "PUBLISHED"
   );
 
   const bookingsData = [
-    { userId: students[0].id, eventId: publishedEvents[0].id, status: BookingStatus.CONFIRMED, checkedIn: true, checkedInAt: new Date() },
-    { userId: students[0].id, eventId: publishedEvents[1].id, status: BookingStatus.CONFIRMED, checkedIn: false },
-    { userId: students[1].id, eventId: publishedEvents[0].id, status: BookingStatus.CONFIRMED, checkedIn: false },
-    { userId: students[1].id, eventId: publishedEvents[2].id, status: BookingStatus.CONFIRMED, checkedIn: true, checkedInAt: new Date() },
-    { userId: students[2].id, eventId: publishedEvents[3].id, status: BookingStatus.CONFIRMED, checkedIn: false },
-    { userId: students[3].id, eventId: publishedEvents[4].id, status: BookingStatus.WAITLISTED, checkedIn: false },
-    { userId: students[4].id, eventId: publishedEvents[0].id, status: BookingStatus.CONFIRMED, checkedIn: false },
-    { userId: students[4].id, eventId: publishedEvents[5].id, status: BookingStatus.CANCELLED, checkedIn: false },
+    { userId: students[0].id, eventId: publishedEvents[0].id, status: "CONFIRMED", checkedIn: true, checkedInAt: new Date() },
+    { userId: students[0].id, eventId: publishedEvents[1].id, status: "CONFIRMED", checkedIn: false },
+    { userId: students[1].id, eventId: publishedEvents[0].id, status: "CONFIRMED", checkedIn: false },
+    { userId: students[1].id, eventId: publishedEvents[2].id, status: "CONFIRMED", checkedIn: true, checkedInAt: new Date() },
+    { userId: students[2].id, eventId: publishedEvents[3].id, status: "CONFIRMED", checkedIn: false },
+    { userId: students[3].id, eventId: publishedEvents[4].id, status: "WAITLISTED", checkedIn: false },
+    { userId: students[4].id, eventId: publishedEvents[0].id, status: "CONFIRMED", checkedIn: false },
+    { userId: students[4].id, eventId: publishedEvents[5].id, status: "CANCELLED", checkedIn: false },
   ];
 
   for (const bData of bookingsData) {
