@@ -80,9 +80,9 @@ export async function listUsers(
   if (role) where.role = role;
   if (search) {
     where.OR = [
-      { name: { contains: search, mode: "insensitive" } },
-      { email: { contains: search, mode: "insensitive" } },
-      { institution: { contains: search, mode: "insensitive" } },
+      { name: { contains: search } },
+      { email: { contains: search } },
+      { institution: { contains: search } },
     ];
   }
 

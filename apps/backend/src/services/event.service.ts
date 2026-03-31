@@ -96,9 +96,9 @@ export async function listEvents(query: EventsQuery) {
 
   if (query.search) {
     where.OR = [
-      { title: { contains: query.search, mode: "insensitive" } },
-      { description: { contains: query.search, mode: "insensitive" } },
-      { location: { contains: query.search, mode: "insensitive" } },
+      { title: { contains: query.search } },
+      { description: { contains: query.search } },
+      { location: { contains: query.search } },
     ];
   }
 
