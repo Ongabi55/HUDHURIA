@@ -20,7 +20,7 @@ const config: Config = {
         muted: '#8899BB',
       },
       fontFamily: {
-        sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
+        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
       },
       boxShadow: {
         glass: '0 8px 32px rgba(0,0,0,0.4)',
