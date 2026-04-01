@@ -9,10 +9,12 @@ import { CategoryFilter } from '@/components/events/CategoryFilter'
 import { SearchBar } from '@/components/events/SearchBar'
 import { EmptyState } from '@/components/shared/EmptyState'
 import { Button } from '@/components/ui/button'
+import { useI18n } from '@/contexts/i18n'
 
 const PAGE_SIZE = 9
 
 export default function DiscoverPage() {
+  const { t } = useI18n()
   const [search, setSearch]     = useState('')
   const [category, setCategory] = useState('')
   const [page, setPage]         = useState(1)
@@ -27,52 +29,63 @@ export default function DiscoverPage() {
     placeholderData: (prev) => prev,
   })
 
-  const events   = data?.data?.items ?? []
-  const total    = data?.data?.total ?? 0
-  const hasMore  = data?.data?.hasNextPage ?? false
+  const events  = data?.data?.items ?? []
+  const total   = data?.data?.total ?? 0
+  const hasMore = data?.data?.hasNextPage ?? false
 
   return (
-    <div className="min-h-screen px-4 pt-24 pb-20">
+    <div className="min-h-screen px-4 pt-10 pb-20">
       <div className="max-w-6xl mx-auto">
 
         {/* Header */}
         <div className="mb-10">
-          <p className="text-burg-bright text-sm font-medium uppercase tracking-widest mb-2">Matukio</p>
-          <h1 className="text-4xl sm:text-5xl font-black text-[#F0F4FF] mb-3">
-            Gundua Matukio
+          <p className="text-burg-bright text-xs font-bold uppercase tracking-[0.2em] mb-3">
+            {t('page_discover_label')}
+          </p>
+          <h1 className="text-4xl sm:text-5xl font-black text-[var(--text)] mb-3">
+            {t('page_discover_title')}
           </h1>
-          <p className="text-muted text-lg">
-            {total > 0 ? `Matukio ${total} yanayokusubiri` : 'Tafuta matukio yanayokuvutia'}
+          <p className="text-[var(--text-muted)] text-lg">
+            {total > 0 ? `${total} events waiting for you` : t('page_discover_sub_empty')}
           </p>
         </div>
 
-        {/* Sticky filters */}
-        <div className="sticky top-16 z-30 -mx-4 px-4 py-3 bg-navy/80 backdrop-blur-xl border-b border-white/[0.06] mb-8">
+        {/* Sticky filter bar */}
+        <div className="sticky top-16 z-30 -mx-4 px-4 py-3 bg-[var(--nav-bg)] backdrop-blur-xl border-b border-[var(--glass-border)] mb-8">
           <div className="max-w-6xl mx-auto space-y-3">
             <SearchBar value={search} onChange={handleSearch} />
             <CategoryFilter selected={category} onChange={handleCategory} />
           </div>
         </div>
 
-        {/* Grid */}
+        {/* Results count */}
+        {!isLoading && events.length > 0 && (
+          <p className="text-[var(--text-muted)] text-sm mb-6">
+            Showing <span className="text-[var(--text)] font-semibold">{events.length}</span> of{' '}
+            <span className="text-[var(--text)] font-semibold">{total}</span> events
+            {category && <span> in <span className="text-burg-bright font-semibold">{category}</span></span>}
+          </p>
+        )}
+
+        {/* Grid — 1 col mobile, 2 tablet, 3 desktop */}
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-5">
             {Array.from({ length: 6 }).map((_, i) => <EventCardSkeleton key={i} />)}
           </div>
         ) : events.length === 0 ? (
           <EmptyState
             icon={<Search className="w-12 h-12" />}
-            title="Hakuna matukio yaliyopatikana"
-            description="Jaribu kutafuta kwa maneno tofauti au uchague kategoria nyingine."
+            title={t('no_results')}
+            description={t('no_results_sub')}
             action={
               <Button variant="glass" onClick={() => { setSearch(''); setCategory('') }}>
-                Futa Vichujio
+                Clear Filters
               </Button>
             }
           />
         ) : (
           <>
-            <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 transition-opacity ${isFetching ? 'opacity-70' : 'opacity-100'}`}>
+            <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-5 transition-opacity duration-200 ${isFetching ? 'opacity-60' : 'opacity-100'}`}>
               {events.map((event, i) => (
                 <EventCard key={event.id} event={event} index={i} />
               ))}
@@ -82,13 +95,13 @@ export default function DiscoverPage() {
             <div className="flex items-center justify-center gap-4 mt-12">
               {page > 1 && (
                 <Button variant="glass" onClick={() => setPage(p => p - 1)}>
-                  ← Iliyotangulia
+                  ← Previous
                 </Button>
               )}
-              <span className="text-muted text-sm">Ukurasa {page}</span>
+              <span className="text-[var(--text-muted)] text-sm">Page {page}</span>
               {hasMore && (
                 <Button variant="glass" onClick={() => setPage(p => p + 1)} disabled={isFetching}>
-                  {isFetching ? 'Inapakuliwa...' : 'Inayofuata →'}
+                  {isFetching ? 'Loading...' : 'Next →'}
                 </Button>
               )}
             </div>

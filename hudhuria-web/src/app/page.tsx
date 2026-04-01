@@ -321,13 +321,13 @@ function FeaturedCard({ event, index }: { event: Event; index: number }) {
             <span className="truncate">{event.location}</span>
           </div>
         </div>
-        {event.capacity != null && (
+        {event.seatsLeft != null && (
           <div className="mt-4 pt-4 border-t border-white/[0.06] flex items-center justify-between">
             <span className="text-xs text-muted">
-              {event.capacity - (event._count?.bookings ?? 0)} nafasi zilizobaki
+              {event.seatsLeft} spots remaining
             </span>
             <span className="text-xs font-semibold text-burg-bright group-hover:underline">
-              Angalia →
+              View →
             </span>
           </div>
         )}
