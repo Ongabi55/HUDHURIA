@@ -13,7 +13,16 @@ import bookingRoutes from './routes/booking.routes'
 import adminRoutes from './routes/admin.routes'
 
 const app = express()
-app.use(cors())
+app.use(cors({
+  origin: [
+    'http://localhost:5173',  // Vite frontend
+    'http://localhost:3001',  // Next.js alt ports
+    'http://localhost:3002',
+    'http://localhost:3003',
+    'http://localhost:4173',  // Vite preview
+  ],
+  credentials: true,
+}))
 app.use(express.json())
 
 // ── Routes ───────────────────────────────────────────────────────────────

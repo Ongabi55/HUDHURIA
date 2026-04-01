@@ -55,7 +55,14 @@ export default function Register() {
       setAuth(user, accessToken)
       navigate('/dashboard')
     } catch (err) {
-      setError(err.response?.data?.message ?? 'Registration failed. Please try again.')
+      if (!err.response) {
+        setError('Cannot connect to server. Make sure the backend is running on port 3000.')
+      } else {
+        // Surface Zod field errors if present
+        const fieldErrors = err.response?.data?.errors?.fieldErrors
+        const firstField = fieldErrors && Object.values(fieldErrors).flat()[0]
+        setError(firstField ?? err.response?.data?.message ?? 'Registration failed. Please try again.')
+      }
     } finally {
       setLoading(false)
     }

@@ -2,7 +2,7 @@ import axios from 'axios'
 
 const BASE_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api'
 
-const http = axios.create({ baseURL: BASE_URL, withCredentials: true })
+const http = axios.create({ baseURL: BASE_URL })
 
 // Attach auth token to every request
 http.interceptors.request.use((config) => {

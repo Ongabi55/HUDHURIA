@@ -23,7 +23,11 @@ export default function Login() {
       setAuth(user, accessToken)
       navigate('/dashboard')
     } catch (err) {
-      setError(err.response?.data?.message ?? 'Invalid email or password')
+      if (!err.response) {
+        setError('Cannot connect to server. Make sure the backend is running on port 3000.')
+      } else {
+        setError(err.response?.data?.message ?? 'Invalid email or password')
+      }
     } finally {
       setLoading(false)
     }
